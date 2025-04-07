@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>doom gunu</title>
+  <style>
+    body {
+      margin: 0;
+      background-image: url('foto/lotr.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .heart-glow {
+      position: absolute;
+      width: 640px;
+      height: 600px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -5;
+      background: radial-gradient(circle at center, rgba(170, 255, 0, 0.3), transparent 70%);
+      clip-path: url(#heartClip);
+      filter: blur(30px);
+    }
+
+    .heart-shadow {
+      position: absolute;
+      width: 640px;
+      height: 600px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: transparent;
+      clip-path: url(#heartClip);
+      z-index: -2;
+    }
+
+    .heart-clip-outline {
+      position: absolute;
+      width: 630px;
+      height: 610px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      clip-path: url(#heartClip);
+      background-color: rgba(157, 255, 0, 0.589);
+      z-index: -1;
+    }
+
+    .small-heart-shadow {
+      position: absolute;
+      width: 230px;
+      height: 220px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: transparent;
+      clip-path: url(#smallHeartClip);
+      z-index: 8;
+    }
+
+    .small-heart-outline {
+      position: absolute;
+      width: 220px;
+      height: 210px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      clip-path: url(#smallHeartClip);
+      background-color: rgba(203, 209, 25, 0.731);
+      z-index: 9;
+    }
+
+    .small-heart {
+      position: absolute;
+      width: 200px;
+      height: 190px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      clip-path: url(#smallHeartClip);
+      background-image: url('foto/foto9.jpg');
+      background-size: cover;
+      background-position: center;
+      z-index: 10;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .small-heart:hover {
+      transform: translate(-50%, -50%) scale(3);
+    }
+
+    .heart-mask {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 560px;
+      clip-path: url(#heartClip);
+      overflow: hidden;
+      display: flex;
+      z-index: 1;
+    }
+    
+
+    .quarter {
+      width: 25%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .q1 { background-image: url('foto/foto1.jpg'); }
+    .q2 { background-image: url('foto/foto2.jpg'); }
+    .q3 { background-image: url('foto/foto3.jpg'); }
+    .q4 { background-image: url('foto/foto4.jpg'); }
+
+    /* Yazı mesajı */
+    #heartMessage {
+      position: absolute;
+      width: 750px;
+      height: 650px;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ff0077;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 12px 24px;
+      border-radius: 20px;
+      opacity: 0;
+      visibility: hidden;         /* Ekle! */
+      pointer-events: none;       /* Ekle! */
+      transition: opacity 0.4s ease;
+      z-index: 20;
+    }
+    
+    #heartMessage.show {
+      opacity: 1;
+      visibility: visible;        /* Ekle! */
+      pointer-events: auto;       /* Ekle! */
+    }
+    
+    
+    .close-btn {
+      position: absolute;
+      top: 4px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ff0077;
+      cursor: pointer;
+    }
+
+    #musicIndicator {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+      font-weight: 500;
+      color: #ff0077;
+      box-shadow: 0 0 10px rgba(255, 0, 100, 0.2);
+      opacity: 0;
+      pointer-events: auto;  /* <<< BU SATIRI GÜNCELLEDİK */
+      transition: opacity 0.5s ease;
+      z-index: 99;
+    }
+    
+    
+    #musicIndicator.show {
+      opacity: 1;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.07); }
+      100% { transform: scale(1); }
+    }
+
+    #musicToggleBtn {
+      margin-left: 10px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #ff0077;
+      transition: transform 0.2s ease;
+    }
+    
+    #musicToggleBtn:hover {
+      transform: scale(1.2);
+    }
+    
+    
+    
+    
+    
+  </style>
+</head>
+<body>
+
+  <!-- SVG Clip Paths -->
+  <svg width="0" height="0">
+    <defs>
+      <clipPath id="heartClip" clipPathUnits="objectBoundingBox">
+        <path transform="scale(0.01)" d="M50 80 L20 50 A20 20 0 1 1 50 30 A20 20 0 1 1 80 50 Z"/>
+      </clipPath>
+      <clipPath id="smallHeartClip" clipPathUnits="objectBoundingBox">
+        <path transform="scale(0.01)" d="M50 80 L20 50 A20 20 0 1 1 50 30 A20 20 0 1 1 80 50 Z"/>
+      </clipPath>
+    </defs>
+  </svg>
+
+  <!-- Büyük kalp gölge -->
+  <div class="heart-shadow"></div>
+
+  <!-- Büyük kalp outline -->
+  <div class="heart-clip-outline"></div>
+
+  <!-- Büyük kalp içeriği -->
+  <div class="heart-mask">
+    <div class="quarter q1"></div>
+    <div class="quarter q2"></div>
+    <div class="quarter q3"></div>
+    <div class="quarter q4"></div>
+  </div>
+
+  <!-- Küçük kalp gölge -->
+  <div class="small-heart-shadow"></div>
+
+  <!-- Küçük kalp outline -->
+  <div class="small-heart-outline"></div>
+
+  <!-- Küçük kalp içeriği -->
+  <div class="small-heart" id="smallHeart"></div>
+
+  <!-- Parlayan arka plan -->
+  <div class="heart-glow"></div>
+
+     <!-- Ses dosyası -->
+     <audio id="heartSound" src="music/17 The Return Of The King.mp3"></audio>
+
+  <!-- Yazı mesajı -->
+  <!-- Yazı mesajı -->
+  <div id="heartMessage">
+    <h5>İyi ki doğdun, aşkım
+      Makromusic'te başlayan bir sohbetin bu hikâyeyi böylesine özel bir yere taşıyacağını asla düşünmemiştim. Ama ne mutlu ki başlamış.
+      Senin hayatına girebilmek ve kalbimde sana böyle bir yer açabilmek harika hissettiriyor.
+      
+      Olan biten çoğu şeyde beni düşünmen, en küçük detaylarda bile beni gözetmen, bunlar beni hem şaşırtıyor hem de sana daha çok âşık olmama neden oluyor.
+      İlişkimizi ayakta tutmak için gösterdiğin tüm çabalar için gerçekten minnettarım.
+      Biliyorum, bazen kavga ediyoruz, bazen fikir ayrılığına düşüyoruz ama her seferinde yine birbirimize dönüyoruz. Çünkü kalp yerini biliyor.
+      
+      Bu dönemler belki zor, belki biraz inişli çıkışlı ama sonunda birbirimizi daha iyi tanımamızı sağlıyor.
+      Daha güçlü bir "biz" oluyoruz.
+      
+      Seninle oyunlar oynamak, bir film açıp birlikte vakit geçirmek ya da sadece yanında sessizce oturmak bile her şeye değer.
+      Umarım daha nice doğum günlerini birlikte kutlarız. Daha çok güleriz, daha çok izleriz, daha da çok severiz.
+      
+      Sen en iyisisin ve hep yanımdasın.
+      Seni çok seviyorum.💖</h5>
+
+    
+    <button id="closeBtn" class="close-btn">×</button>
+  </div>
+
+
+  <div id="musicIndicator">
+    🎶 Return Of The King
+    <button id="musicToggleBtn">⏸️</button>
+  </div>
+  
+  
+  
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const heart = document.getElementById('smallHeart');
+      const sound = document.getElementById('heartSound');
+      const message = document.getElementById('heartMessage');
+      const closeBtn = document.getElementById('closeBtn');
+      const musicIndicator = document.getElementById('musicIndicator');
+      const musicToggleBtn = document.getElementById('musicToggleBtn');
+    
+      heart.addEventListener('click', () => {
+        sound.currentTime = 0;
+        sound.play();
+        message.classList.add('show');
+        musicIndicator.classList.add('show');
+        musicToggleBtn.textContent = '⏸️';
+      });
+    
+      closeBtn.addEventListener('click', () => {
+        message.classList.remove('show');
+        // musicIndicator.classList.remove('show'); ← Bu satırı kaldırdık
+        // sound.pause(); ← Bunu da kaldırdık
+      });
+    
+      musicToggleBtn.addEventListener('click', () => {
+        if (sound.paused) {
+          sound.play().then(() => {
+            musicToggleBtn.textContent = '⏸️';
+          }).catch(err => {
+            alert("Müzik başlatılamadı: " + err);
+            console.error(err);
+          });
+        } else {
+          sound.pause();
+          musicToggleBtn.textContent = '▶️';
+        }
+      });
+    });        
+
+    
+  </script>
+  
+  
+
+</body>
+</html>
